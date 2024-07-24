@@ -28,6 +28,8 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>App needs access to photo lib for profile images</string>
 	<key>NSCameraUsageDescription</key>
     <string>Allow camera permission to capture headshots</string>
     <key>NSMicrophoneUsageDescription</key>

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:camera_macos/camera_macos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:timer_application/platform_channels/camera_service.dart';
 import 'package:timer_application/widgets/home/bloc/home_bloc.dart';
 import 'package:timer_application/widgets/home/screens/tabs/screen_shot_tab.dart';
 
@@ -12,6 +14,7 @@ import '../../../constant/color.dart';
 import '../../3d_buttons.dart';
 import '../../count_up_timer/count_timer.dart';
 import '../../count_up_timer/count_timer_widget.dart';
+import 'tabs/head_shot_tab.dart';
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -25,18 +28,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late CountTimerController controller;
   ScreenshotController screenshotController = ScreenshotController();
-  late HomeBloc homeBloc;
 
+  late CameraMacOSController macOSController = CameraMacOSController(CameraMacOSArguments(size: Size(100, 100)));
+
+  late HomeBloc homeBloc;
   @override
   void initState() {
     super.initState();
     homeBloc = context.read<HomeBloc>();
+
     controller = CountTimerController(
       onTimeUpdate10Sec: () {},
       onTimeUpdate: (duration) async {
         Uint8List? image = await screenshotController.capture();
         if (image != null) {
           homeBloc.add(AddScreenShot(image: image));
+         // macOSController.takePicture();
+          CameraService.captureHeadshot();
         }
       },
     );
@@ -116,7 +124,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               const Divider(color: Colors.white54, height: 1),
-              const Expanded(
+              Expanded(
                 child: DefaultTabController(
                   length: 2,
                   child: Column(
@@ -155,13 +163,3 @@ class _HomePageState extends State<HomePage> {
 
 
 
-class HeadshotTab extends StatelessWidget {
-  const HeadshotTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Headshots will appear here'),
-    );
-  }
-}
